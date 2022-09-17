@@ -23,6 +23,14 @@ def set_path_string(args, create_flag):
             return False
     return path_string
 
+def save(dictionary, name=''):
+    if (name):
+        with open(str(name) + '.json', 'w') as outfile:
+            json.dump(dictionary, outfile, indent=4)
+    else:
+        with open('eng.json', 'w') as outfile:
+            json.dump(dictionary, outfile, indent=4)
+
 def create(dictionary, *args):
     path_string = set_path_string(args, True)
     with open(path + path_string + 'eng.json', 'w') as outfile:
