@@ -2,19 +2,26 @@ import os
 import json
 
 class JsonDB:
-    def __init__(self, path=None):
+    def __init__(self, path=None, indent=4):
         self.path = path or os.path.join(os.getcwd(), 'jdb')
+        self.indent = indent
 
     def _get_file_path(self, *args):
         dir_path = os.path.join(self.path, *args)
-        file_path = os.path.join(dir_path, 'eng.json')
+        file_path = os.path.join(dir_path, 'jdb.json')
         return dir_path, file_path
+    
+    def _write_json(self, data, file_path):
+        with open(file_path, 'w') as f:
+            json.dump(data, f, indent=self.indent)
+    
+    def set_indent(self, indent):
+        self.indent = indent
 
     def create(self, dictionary, *args):
         dir_path, file_path = self._get_file_path(*args)
         os.makedirs(dir_path, exist_ok=True)
-        with open(file_path, 'w') as outfile:
-            json.dump(dictionary, outfile, indent=4)
+        self._write_json(dictionary, file_path)
 
     def retrieve(self, *args):
         _, file_path = self._get_file_path(*args)
@@ -30,8 +37,7 @@ class JsonDB:
     def update(self, dictionary, *args):
         _, file_path = self._get_file_path(*args)
         if os.path.exists(file_path):
-            with open(file_path, 'w') as outfile:
-                json.dump(dictionary, outfile, indent=4)
+            self._write_json(dictionary, file_path)
             return True
         return False
 
@@ -45,7 +51,7 @@ class JsonDB:
                 data = json.load(f)
                 data.update(dictionary)
                 f.seek(0)
-                json.dump(data, f, indent=4)
+                self._write_json(data, file_path)
             return True
         return False
 
@@ -70,7 +76,7 @@ class JsonDB:
                     del data[key]
                     f.seek(0)
                     f.truncate()
-                    json.dump(data, f, indent=4)
+                    self._write_json(data, file_path)
                     return True
                 print('The selected key does not exist')
                 return False
