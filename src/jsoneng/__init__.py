@@ -117,10 +117,10 @@ class JsonDB:
         highest = max(map(int, data.keys()), default=-1)
         self.patch_kv(str(highest + 1), value, *args)
     
-    def k(self, desc, value, *args):
-        data = self.retrieve(*args)
-        highest = max(map(int, data.keys()), default=-1)
-        self.patch_kv(str(highest + 1) + ' ' + desc, value, *args)
+    # def k(self, desc, value, *args):
+    #     data = self.retrieve(*args)
+    #     highest = max(map(int, data.keys()), default=-1)
+    #     self.patch_kv(str(highest + 1) + ' ' + desc, value, *args)
 
     def v(self, desc, value='', *args):
         if value:
