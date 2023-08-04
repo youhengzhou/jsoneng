@@ -1,20 +1,23 @@
 import os
 import json
 
+
 class JsonDB:
-    def __init__(self, path=None, indent=4):
-        self.path = path or os.path.join(os.getcwd(), 'jdb')
+    def __init__(self, dictionary=None, path=None, indent=4):
+        self.path = path or os.path.join(os.getcwd(), "jdb")
         self.indent = indent
+        if dictionary is not None:
+            self.create(dictionary)
 
     def _get_file_path(self, *args):
         dir_path = os.path.join(self.path, *args)
-        file_path = os.path.join(dir_path, 'jdb.json')
+        file_path = os.path.join(dir_path, "jdb.json")
         return dir_path, file_path
-    
+
     def _write_json(self, data, file_path):
-        with open(file_path, 'w') as f:
+        with open(file_path, "w") as f:
             json.dump(data, f, indent=self.indent)
-    
+
     def set_indent(self, indent):
         self.indent = indent
 
@@ -26,7 +29,7 @@ class JsonDB:
     def retrieve(self, *args):
         _, file_path = self._get_file_path(*args)
         if os.path.exists(file_path):
-            with open(file_path, 'r') as f:
+            with open(file_path, "r") as f:
                 return json.load(f)
         return False
 
@@ -47,7 +50,7 @@ class JsonDB:
     def patch(self, dictionary, *args):
         _, file_path = self._get_file_path(*args)
         if os.path.exists(file_path):
-            with open(file_path, 'r+') as f:
+            with open(file_path, "r+") as f:
                 data = json.load(f)
                 data.update(dictionary)
                 f.seek(0)
@@ -64,13 +67,13 @@ class JsonDB:
             os.remove(file_path)
             os.rmdir(dir_path)
             return True
-        print('The selected file does not exist')
+        print("The selected file does not exist")
         return False
 
     def delete_k(self, key, *args):
         _, file_path = self._get_file_path(*args)
         if os.path.exists(file_path):
-            with open(file_path, 'r+') as f:
+            with open(file_path, "r+") as f:
                 data = json.load(f)
                 if key in data:
                     del data[key]
@@ -78,9 +81,9 @@ class JsonDB:
                     f.truncate()
                     self._write_json(data, file_path)
                     return True
-                print('The selected key does not exist')
+                print("The selected key does not exist")
                 return False
-        print('The selected file does not exist')
+        print("The selected file does not exist")
         return False
 
     def print(self, *args):
@@ -104,7 +107,7 @@ class JsonDB:
 
     def p(self, key, value, *args):
         self.patch_kv(key, value, *args)
-    
+
     def ptr(self, key, *args):
         value = self.retrieve_k(key, *args)
         if value:
@@ -116,15 +119,15 @@ class JsonDB:
         data = self.retrieve(*args)
         highest = max(map(int, data.keys()), default=-1)
         self.patch_kv(str(highest + 1), value, *args)
-    
+
     # def k(self, desc, value, *args):
     #     data = self.retrieve(*args)
     #     highest = max(map(int, data.keys()), default=-1)
     #     self.patch_kv(str(highest + 1) + ' ' + desc, value, *args)
 
-    def v(self, desc, value='', *args):
+    def v(self, desc, value="", *args):
         if value:
-            value = ' ' + value
+            value = " " + value
         self.i(desc + value, *args)
 
     def f(self, key, value, *args):
